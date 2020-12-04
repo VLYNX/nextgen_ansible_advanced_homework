@@ -1,6 +1,18 @@
 - hosts: localhost
-  connection: local
-  become: no
+  vars:
+    OSP_GUID: "{{ lookup('env','OSP_GUID') }}"
+    OSP_DOMAIN: "{{ lookup('env','OSP_DOMAIN') }}"
+    OPENTLC_ID: "{{ lookup('env','OPENTLC_ID') }}"
+  tasks:
+  - name: Create workstation inventory
+    add_host:
+       name: "workstation-{{OSP_GUID}}.{{OSP_DOMAIN}}"
+       group: workstation
+       ansible_user: "{{ OPENTLC_ID }}"
+  become: yes
   gather_facts: true
+
+- hosts: workstation
+  become: yes
   roles:
-   - osp-servers
+    - osp-servers
